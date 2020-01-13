@@ -5,27 +5,25 @@ namespace EventsDemo.FastClock
 {
     public class FastClock
     {
-        private static FastClock _instance;
+        public EventHandler<DateTime> OneMinuteIsOver;
+        
+        private readonly DispatcherTimer _timer;
+        private bool _isRunning;
+        public DateTime CurrentTime { get; set; }
 
+        private static FastClock _instance;
         public static FastClock Instance
         {
             get
             {
                 if (_instance == null)
                 {
-                    _instance = new FastClock(DateTime.Now);
+                    _instance = new FastClock();
                 }
 
                 return _instance;
             }
         }
-
-        private readonly DispatcherTimer _timer;
-        private bool _isRunning;
-
-        public EventHandler<DateTime> OneMinuteIsOver;
-
-        public DateTime CurrentTime { get; private set; }
 
         public bool IsRunning
         {
@@ -46,9 +44,8 @@ namespace EventsDemo.FastClock
             }
         }
 
-        public FastClock(DateTime currentTime)
+        public FastClock()
         {
-            CurrentTime = currentTime;
             _timer = new DispatcherTimer();
             _timer.Tick += OnTimerTick;
             _timer.Interval += TimeSpan.FromMilliseconds(1000);

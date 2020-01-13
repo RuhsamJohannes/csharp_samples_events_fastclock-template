@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Windows;
 
 namespace EventsDemo.FastClockWpf
@@ -16,10 +17,13 @@ namespace EventsDemo.FastClockWpf
         private void MetroWindow_Initialized(object sender, EventArgs e)
         {
             FastClock.FastClock clock = FastClock.FastClock.Instance;
+            clock.CurrentTime = DateTime.Now;
 
             DatePickerDate.SelectedDate = DateTime.Today;
+            TextBlockDate.Text = DateTime.Now.ToShortDateString();
+            TextBlockTime.Text = clock.CurrentTime.ToShortTimeString();
             TextBoxTime.Text = DateTime.Now.ToShortTimeString();
-
+            
             clock.OneMinuteIsOver += FastClockOneMinuteIsOver;
         }
 
@@ -31,7 +35,25 @@ namespace EventsDemo.FastClockWpf
         private void SetFastClockStartDateAndTime()
         {
             TextBlockDate.Text = DatePickerDate.Text;
-            TextBlockTime.Text = TextBoxTime.Text; //stimmt noch nicht
+            bool isOK = Regex.IsMatch(TextBoxTime.Text, @"[0-2][0-9]\:[0-5][0-9]");
+
+
+            if (isOK && TextBoxTime.Text[0] -'0' == 2 && TextBoxTime.Text[1] - '0' < 4)
+            {
+                TextBlockTime.Text = TextBoxTime.Text;
+                FastClock.FastClock clock = FastClock.FastClock.Instance;
+                clock.CurrentTime = Convert.ToDateTime(TextBoxTime.Text);
+            }
+            else if (isOK && TextBoxTime.Text[0] - '0' != 2)
+            {
+                TextBlockTime.Text = TextBoxTime.Text;
+                FastClock.FastClock clock = FastClock.FastClock.Instance;
+                clock.CurrentTime = Convert.ToDateTime(TextBoxTime.Text);
+            }
+            else
+            {
+                TextBlockTime.Text = "insert correct time";
+            }
         }
 
         private void FastClockOneMinuteIsOver(object sender, DateTime fastClockTime)
