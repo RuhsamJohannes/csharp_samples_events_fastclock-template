@@ -6,10 +6,29 @@ namespace EventsDemo.FastClock
     public class FastClock
     {
         public EventHandler<DateTime> OneMinuteIsOver;
-        
+        public DateTime CurrentTime { get; set; }
+
         private readonly DispatcherTimer _timer;
         private bool _isRunning;
-        public DateTime CurrentTime { get; set; }
+        private double _factor = 60;
+        public double Factor 
+        {
+            get => _factor;
+
+            set
+            {
+                if (value < 1)
+                {
+                    _factor = 1;
+                }
+                else
+                {
+                    _factor = value / 3600 * 60000;
+                }
+                _timer.Interval = TimeSpan.FromMilliseconds(_factor);
+            }
+        
+        }
 
         private static FastClock _instance;
         public static FastClock Instance
@@ -33,6 +52,7 @@ namespace EventsDemo.FastClock
             {
                 if (!_isRunning && value)
                 {
+                    _timer.Interval = TimeSpan.FromMilliseconds(_factor);
                     _timer.Start();
                 }
                 else if (_isRunning && !value)
@@ -48,7 +68,7 @@ namespace EventsDemo.FastClock
         {
             _timer = new DispatcherTimer();
             _timer.Tick += OnTimerTick;
-            _timer.Interval += TimeSpan.FromMilliseconds(1000);
+            _timer.Interval += TimeSpan.FromMilliseconds(_factor);
         }
 
         private void OnTimerTick(object sender, EventArgs e)

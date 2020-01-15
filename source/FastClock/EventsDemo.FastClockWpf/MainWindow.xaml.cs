@@ -23,7 +23,7 @@ namespace EventsDemo.FastClockWpf
             TextBlockDate.Text = DateTime.Now.ToShortDateString();
             TextBlockTime.Text = clock.CurrentTime.ToShortTimeString();
             TextBoxTime.Text = DateTime.Now.ToShortTimeString();
-            
+
             clock.OneMinuteIsOver += FastClockOneMinuteIsOver;
         }
 
@@ -38,7 +38,7 @@ namespace EventsDemo.FastClockWpf
             bool isOK = Regex.IsMatch(TextBoxTime.Text, @"[0-2][0-9]\:[0-5][0-9]");
 
 
-            if (isOK && TextBoxTime.Text[0] -'0' == 2 && TextBoxTime.Text[1] - '0' < 4)
+            if (isOK && TextBoxTime.Text[0] - '0' == 2 && TextBoxTime.Text[1] - '0' < 4)
             {
                 TextBlockTime.Text = TextBoxTime.Text;
                 FastClock.FastClock clock = FastClock.FastClock.Instance;
@@ -58,12 +58,17 @@ namespace EventsDemo.FastClockWpf
 
         private void FastClockOneMinuteIsOver(object sender, DateTime fastClockTime)
         {
+            if (TextBlockTime.Text == "00:00")
+            {
+                TextBlockDate.Text = fastClockTime.ToShortDateString();
+            }
             TextBlockTime.Text = fastClockTime.ToShortTimeString();
         }
 
         private void CheckBoxClockRuns_Click(object sender, RoutedEventArgs e)
         {
             FastClock.FastClock clock = FastClock.FastClock.Instance;
+            clock.Factor = SliderFactor.Value;
             clock.IsRunning = CheckBoxClockRuns.IsChecked == true;
         }
 
@@ -72,6 +77,11 @@ namespace EventsDemo.FastClockWpf
             DigitalClock digitalClock = new DigitalClock();
             digitalClock.Owner = this;
             digitalClock.Show();
+        }
+
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            FastClock.FastClock.Instance.Factor = SliderFactor.Value;
         }
     }
 }

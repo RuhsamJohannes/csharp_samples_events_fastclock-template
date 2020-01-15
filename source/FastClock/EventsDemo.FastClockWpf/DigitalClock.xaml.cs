@@ -15,8 +15,8 @@ namespace EventsDemo.FastClockWpf
         private void Window_Initialized(object sender, EventArgs e)
         {
             FastClock.FastClock clock = FastClock.FastClock.Instance;
-            FastClock.FastClock.Instance.OneMinuteIsOver += DigitalClock_OneMinuteIsOver;
             TextBlockClock.Text = clock.CurrentTime.ToShortTimeString();
+            FastClock.FastClock.Instance.OneMinuteIsOver += DigitalClock_OneMinuteIsOver;
         }
 
         private void DigitalClock_OneMinuteIsOver(object sender, DateTime e)
